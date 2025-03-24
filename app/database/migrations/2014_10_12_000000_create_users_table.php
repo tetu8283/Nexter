@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->unsignedBigInteger('store_id');
+            $table->TinyInteger('role')->default(0); // 0: user, 1: admin
+
+            $table->foreign('store_id')->references('id')->on('stores');
             $table->rememberToken();
             $table->timestamps();
         });

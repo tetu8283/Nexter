@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'store_id',
+        'role'
     ];
 
     /**
@@ -42,4 +44,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // userとstoreのリレーション
+    public function stores()
+    {
+        return $this->hasMany(Store::class);
+    }
 }
