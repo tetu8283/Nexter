@@ -13,7 +13,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-Route::resource('users', UserController::class)->except(['create', 'show', 'edit']);
+Route::resource('users', UserController::class)->except(['create', 'index', 'show', 'edit']);
 Route::resource('inventories', InventoryController::class)->except(['show']);
 
 Route::middleware('auth')->group(function () {

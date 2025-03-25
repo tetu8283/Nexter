@@ -5,19 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="{{ asset('css/reset.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 </head>
 <body>
-    <div class="guest-layout">
+    <div class="login-container">
+
         <!-- Session Status -->
         <div class="auth-session-status mb-4">
             {{ session('status') }}
         </div>
 
+        <h2>ログイン</h2>
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
-            <!-- Email Address -->
-            <div>
+            <div class="form-item">
                 <label for="email">Email</label>
                 <input id="email" class="block mt-1 w-full" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username">
                 <div class="input-error mt-2">

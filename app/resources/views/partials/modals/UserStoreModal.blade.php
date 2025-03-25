@@ -23,13 +23,13 @@
             </div>
             <div class="mb-3">
                 <label for="store" class="form-label">店舗</label>
-                <select name="store" id="store" class="form-select" required>
+                <select name="store_id" id="store_id" class="form-select" required>
                 @foreach ($stores as $store)
                     <option value="{{ $store->id }}">{{ $store->name }}</option>
                 @endforeach
                 </select>
             </div>
-            <input type="hidden" name="role" value="0">
+            <input type="text" name="role" value="0" hidden>
 
             <div class="text-end">
                 <div class="d-flex justify-content-center w-100">

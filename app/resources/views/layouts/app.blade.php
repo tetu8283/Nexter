@@ -10,7 +10,6 @@
     @stack('styles')
 </head>
 <body>
-
     <header>
         @include('partials.header')
         @include('partials.sidebar')
