@@ -26,4 +26,31 @@ class InventoryController extends Controller
             return view('inventories.InventoryIndex', compact('stores', 'books'));
         }
     }
+
+    /**
+     * 在庫登録
+     *
+     * @param Request
+     * @return void
+     */
+    public function store(Request $request) {
+        // 配列で取得
+        $store_id = $request->store_id;
+        $book_ids = $request->book_id;
+
+        // バルクインサートで登録(複数登録対応)
+        $data = array_map(function ($book_id) use ($store_id) {
+            return [
+                'store_id' => $store_id,
+                'book_id' => $book_id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $book_ids);
+
+        Inventory::insert($data);
+
+        return redirect()->route('inventories.index')->with('flash_msg', '在庫を登録しました');
+    }
+
 }
