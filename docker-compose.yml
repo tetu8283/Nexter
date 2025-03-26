@@ -60,3 +60,10 @@ services:
       - db
     volumes:
       - ./phpmyadmin/sessions:/sessions
+
+  mailpit:
+      image: axllent/mailpit
+      container_name: mailpit
+      ports:
+        - "8025:8025"  # Web UI
+        - "1025:1025"  # SMTP
