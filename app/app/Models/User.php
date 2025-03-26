@@ -45,9 +45,9 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    // userとstoreのリレーション
+    // userは1つのstoreに所属する
     public function stores()
     {
-        return $this->hasMany(Store::class);
+        return $this->belongsTo(Store::class);
     }
 }

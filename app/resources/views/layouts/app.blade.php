@@ -16,8 +16,23 @@
     </header>
 
     <main>
-        <div class="container mt-4"></div>
-        @yield('content')
+        @if (Auth::user()->role == 1)
+            @include('partials.modals.UserStoreModal', compact('stores'))
+            @include('partials.modals.BookStoreModal')
+        @else
+            @include('partials.modals.InventoryStoreModal', compact('books'))
+        @endif
+
+
+        <div class="container mt-4">
+            @if (session('flash_msg'))
+                <div class="alert alert-success">
+                    {{ session('flash_msg') }}
+                </div>
+            @endif
+
+            @yield('content')
+        </div>
     </main>
 
     @stack('scripts')
