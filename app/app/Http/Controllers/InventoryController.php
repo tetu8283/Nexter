@@ -20,10 +20,9 @@ class InventoryController extends Controller
 
             return view('inventories.InventoryIndex', compact('stores'));
         } else {
-            $stores = Store::all(); // 従業員登録モーダル用
             $books = Book::all(); // 在庫登録モーダル用
 
-            return view('inventories.InventoryIndex', compact('stores', 'books'));
+            return view('inventories.InventoryIndex', compact('books'));
         }
     }
 
