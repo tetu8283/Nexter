@@ -45,7 +45,7 @@ class UserController extends Controller
 
         $msg = count($users) > 0 ? 'ユーザーを登録しました' : '';
         if (!empty($skippedEmails)) {
-            $msg = ' 次のメールアドレスは既に登録済みのため登録されませんでした: ' . implode(', ', $skipped);
+            $msg = ' 次のメールアドレスは、既に登録済みのため登録されませんでした: ' . implode(', ', $skipped);
         }
 
         return redirect()->route('inventories.index')->with('flash_msg', $msg);
