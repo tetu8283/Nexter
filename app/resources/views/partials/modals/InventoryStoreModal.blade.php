@@ -41,7 +41,6 @@
     </div>
 </div>
 
-{{-- 🔽 商品追加・削除機能用のJS --}}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const addButton = document.getElementById('add-item-button');
@@ -51,7 +50,7 @@
             const newItem = document.createElement('div');
             newItem.classList.add('mb-3', 'inventory-item', 'd-flex', 'align-items-center', 'gap-2');
 
-            // 🔽 新しい商品選択フィールド＋削除ボタンを追加
+            // 商品選択用のhtmlを追加
             newItem.innerHTML = `
                 <label class="form-label mb-0 w-25">商品</label>
                 <select name="book_id[]" class="form-select w-75" required>
@@ -65,7 +64,6 @@
             container.appendChild(newItem);
         });
 
-        // 🔽 削除ボタンのイベントを一括で管理
         container.addEventListener('click', function (e) {
             if (e.target.classList.contains('remove-item-button')) {
                 const item = e.target.closest('.inventory-item');

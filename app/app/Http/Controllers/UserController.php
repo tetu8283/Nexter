@@ -4,21 +4,49 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
 
 class UserController extends Controller
 {
     public function store(Request $request) {
-        $user = new User();
+        $names = $request->input('name');
+        $emails = $request->input('email');
+        $passwords = $request->input('password');
+        $store_ids = $request->input('store_id');
+        $roles = $request->input('role');
 
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = $request->password;
-        $user->store_id = $request->store_id;
-        $user->role = $request->role; // 一般従業員は固定
+        $users = [];
+        $skipped = [];
 
-        $user->save();
+        for ($i = 0; $i < count($names); $i++) {
+            // 登録済みのメアドはスキップ
+            if (DB::table('users')->where('email', $emails[$i])->exists()) {
+                $skipped[] = $emails[$i];
+                continue;
+            }
 
-        $flash_msg = 'ユーザーを登録しました';
-        return redirect()->route('inventories.index')->with('flash_msg', $flash_msg);
+            $users[] = [
+                'name' => $names[$i],
+                'email' => $emails[$i],
+                'password' => Hash::make($passwords[$i]),
+                'store_id' => $store_ids[$i],
+                'role' => $roles[$i],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        if (!empty($users)) {
+            User::insert($users);
+        }
+
+        $msg = count($users) > 0 ? 'ユーザーを登録しました。' : '';
+        if (!empty($skipped)) {
+            $msg .= ' 次メールアドレスは登録済みのためスキップされました: ' . implode(', ', $skipped);
+        }
+
+        return redirect()->route('inventories.index')->with('flash_msg', $msg);
     }
 }
