@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\BookController;
 use App\Http\Controllers\ArrivalController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BookController;
 
 
 Route::get('/dashboard', function () {
@@ -17,6 +17,10 @@ Route::resource('users', UserController::class)->except(['create', 'index', 'sho
 Route::resource('inventories', InventoryController::class)->except(['show']);
 Route::resource('books', BookController::class)->only(['store']);
 Route::resource('arrivals', ArrivalController::class);
+
+// 非同期で店舗情報取得用
+Route::get('/store-info/{storeId}', [InventoryController::class, 'getStoreInfo']);
+
 
 
 

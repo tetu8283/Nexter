@@ -21,8 +21,13 @@ class Inventory extends Model
     }
 
     // 1つの在庫は複数の本を持つ
+    // public function book()
+    // {
+    //     return $this->hasMany(Book::class);
+    // }
+
     public function book()
     {
-        return $this->hasMany(Book::class);
+        return $this->belongsTo(Book::class);
     }
 }

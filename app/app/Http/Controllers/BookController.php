@@ -23,11 +23,18 @@ class BookController extends Controller
         $books = [];
 
         for ($i = 0; $i < count($names); $i++) {
-            $imagePath = $images[$i]->store('books', 'public');
+            // オリジナルファイル名を取得
+            $file_name = $images[$i]->getClientOriginalName();
+
+            // 画像を指定ディレクトリに保存
+            $imagePath = $images[$i]->storeAs('public/books', $file_name);
+
+            // DB へ保存するパスを生成
+            $publicPath = 'storage/books/' . $file_name;
 
             $books[] = [
                 'name' => $names[$i],
-                'image' => $imagePath,
+                'image' => $publicPath,
                 'weight' => $weights[$i],
                 'status_flag' => $statusFlags[$i],
                 'created_at' => now(),
@@ -35,6 +42,7 @@ class BookController extends Controller
             ];
         }
 
+        // バルクインサート
         Book::insert($books);
 
         return redirect('/inventories')->with('flash_msg', '商品を登録しました');

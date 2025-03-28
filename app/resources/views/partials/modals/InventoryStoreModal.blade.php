@@ -3,7 +3,7 @@
         <div class="modal-content">
 
         <div class="modal-header">
-            <h5 class="modal-title" id="inventoryRegisterModalLabel">在庫登録</h5>
+            <h5 class="modal-title" id="inventoryRegisterModalLabel" style="color: #333333;">在庫登録</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
         </div>
 
@@ -16,10 +16,10 @@
 
                 <div id="inventory-items-container">
                     <div class="mb-3 inventory-item d-flex align-items-center gap-2">
-                        <label class="form-label mb-0 w-25">商品</label>
+                        <label class="form-label mb-0 w-25" style="color: #333333;">商品</label>
                         <select name="book_id[]" class="form-select w-75" required>
                             @foreach ($books as $book)
-                                <option value="{{ $book->id }}">{{ $book->name }}</option>
+                                <option value="{{ $book->id }}" style="color: #333333;">{{ $book->name }}</option>
                             @endforeach
                         </select>
                         {{-- invisibleで見えないがdomには存在するようにすることでスペースを確保 --}}
@@ -28,11 +28,11 @@
                 </div>
 
                 <div class="d-flex justify-content-between mb-3">
-                    <button type="button" class="btn btn-secondary" id="add-item-button">＋ 商品を追加</button>
+                    <button type="button" class="btn btn-secondary text-white" id="add-item-button">＋ 商品を追加</button>
                 </div>
 
                 <div class="d-flex justify-content-center w-100">
-                    <button type="submit" class="btn btn-primary w-25">登録</button>
+                    <button type="submit" class="btn btn-primary w-25 text-white">登録</button>
                 </div>
             </form>
         </div>
@@ -52,10 +52,10 @@
 
             // 商品選択用のhtmlを追加
             newItem.innerHTML = `
-                <label class="form-label mb-0 w-25">商品</label>
+                <label class="form-label mb-0 w-25" style="color: #333333;">商品</label>
                 <select name="book_id[]" class="form-select w-75" required>
                     @foreach ($books as $book)
-                        <option value="{{ $book->id }}">{{ $book->name }}</option>
+                        <option value="{{ $book->id }}" style="color: #333333;">{{ $book->name }}</option>
                     @endforeach
                 </select>
                 <button type="button" class="btn btn-danger btn-sm remove-item-button">✕</button>

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Inventory;
+use App\Models\Arrival;
 
 class Book extends Model
 {
@@ -16,11 +18,11 @@ class Book extends Model
         'status_flag',
     ];
 
-    // 複数の本は1つの在庫に所属する
-    public function inventory()
+    public function inventories()
     {
-        return $this->belongsTo(Inventory::class);
+        return $this->hasMany(Inventory::class);
     }
+
 
     // 1つの入荷予定は複数の本を持つ
     public function arrivals()
