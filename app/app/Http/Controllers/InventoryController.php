@@ -17,10 +17,7 @@ class InventoryController extends Controller
     public function index() {
         if (auth()->user()->role == 1) {
             $stores = Store::all(); // 従業員登録モーダル用
-
-
             $userStoreId = auth()->user()->store_id; // ログイン中のユーザーの所属店舗id
-
             $employeesNum = Store::find($userStoreId)->users()->count(); // 所属店舗の従業員数
             $inventoriesNum = Inventory::where('store_id', $userStoreId)
                 ->join('books', 'inventories.book_id', '=', 'books.id')
@@ -38,9 +35,10 @@ class InventoryController extends Controller
                 ->join('books', 'inventories.book_id', '=', 'books.id')
                 ->where('inventories.store_id', $userStoreId)
                 ->where('books.status_flag', 2)
-                ->get();
-                                                            // 店舗情報      全在庫         従業員数           在庫数             在庫総重量
-            return view('inventories.InventoryIndex', compact('stores', 'inventories', 'employeesNum', 'inventoriesNum', 'totalBooksWeight'));
+                ->orderBy('inventories.created_at', 'desc')
+                ->paginate(10); // 10件取得
+                                                            // 店舗情報      全在庫         従業員数           在庫数             在庫総重量            所属店舗id
+            return view('inventories.InventoryIndex', compact('stores', 'inventories', 'employeesNum', 'inventoriesNum', 'totalBooksWeight', 'userStoreId'));
         } else {
             $books = Book::all(); // 在庫登録モーダル用
             $userStoreId = auth()->user()->store_id; // ログイン中のユーザーの所属店舗id
@@ -62,9 +60,10 @@ class InventoryController extends Controller
                 ->join('books', 'inventories.book_id', '=', 'books.id')
                 ->where('inventories.store_id', $userStoreId)
                 ->where('books.status_flag', 2)
-                ->get();
-                                                                // 全在庫      全書籍       従業員数           在庫数             在庫総重量
-            return view('inventories.InventoryIndex', compact('inventories', 'books', 'employeesNum', 'inventoriesNum', 'totalBooksWeight'));
+                ->orderBy('inventories.created_at', 'desc')
+                ->paginate(10); // 10件取得
+                                                                // 全在庫      全書籍       従業員数           在庫数             在庫総重量         所属店舗id
+            return view('inventories.InventoryIndex', compact('inventories', 'books', 'employeesNum', 'inventoriesNum', 'totalBooksWeight', 'userStoreId'));
         }
     }
 
@@ -106,6 +105,29 @@ class InventoryController extends Controller
             'inventories' => $inventories,
         ]);
     }
+
+    /**
+     * 在庫一覧の無限スクロール用データ取得
+     *
+     * @param int
+     * @return JsonResponse
+     */
+    public function loadInventories($pageNum, $storeId)
+    {
+        $inventories = Inventory::select('inventories.*')
+        ->join('books', 'inventories.book_id', '=', 'books.id')
+        ->where('inventories.store_id', $storeId) // 選択された店舗idの在庫取得
+        ->where('books.status_flag', 2)
+        ->with('book')
+        ->orderBy('inventories.created_at', 'desc')
+        ->paginate(10, ['*'], 'page', $pageNum);
+
+        return response()->json([
+            'inventories' => $inventories->items(), // ページ内の在庫
+            'hasMorePages' => $inventories->hasMorePages(), // 次ページが存在するか
+        ]);
+    }
+
 
     /**
      * 在庫登録
