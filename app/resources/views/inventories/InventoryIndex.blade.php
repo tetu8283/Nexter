@@ -3,6 +3,7 @@
 @section('content')
 <div class="container mt-5">
     <div class="row mb-4">
+        {{-- 総従業員数表示 --}}
         <div class="col-md-4">
             <div class="book bg-light mb-3">
                 <div class="book-body d-flex align-items-center">
@@ -14,7 +15,7 @@
                 </div>
             </div>
         </div>
-
+        {{-- 在庫総数表示 --}}
         <div class="col-md-4">
             <div class="book bg-light mb-3">
                 <div class="book-body d-flex align-items-center">
@@ -26,7 +27,7 @@
                 </div>
             </div>
         </div>
-
+        {{-- 総重量表示 --}}
         <div class="col-md-4">
             <div class="book bg-light mb-3">
                 <div class="book-body d-flex align-items-center">
@@ -43,7 +44,8 @@
     <div class="book">
         <div class="book-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="mb-0">在庫一覧</h5>
-            @if(Auth::user()->role === 1)
+
+            @if(Auth::user()->role === 1)   {{-- 管理者の場合 --}}
                 <div class="d-flex align-items-center">
                     <select name="store_id" id="selectedStore" class="form-select" required>
                         @foreach ($stores as $store)
@@ -51,6 +53,12 @@
                                 {{ $store->name }}
                             </option>
                         @endforeach
+                    </select>
+                </div>
+            @else                           {{-- 従業員だと、所属店舗のみ表示 --}}
+                <div class="d-flex align-items-center">
+                    <select name="store_id" id="selectedStore" class="form-select" required>
+                        <option value="{{ $userStore->id }}" {{ $userStore->id == $userStoreId }}>{{ $userStore->name }}</option>
                     </select>
                 </div>
             @endif

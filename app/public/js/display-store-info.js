@@ -8,13 +8,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 店舗選択時のイベント
     selectedStore.addEventListener('change', function () {
-        const storeId = this.value; // thisで上記のselecterStoreを指定
+        const storeId = this.value;               // thisで上記のselecterStoreを指定
 
         // 引数のurlにgetを送る
         fetch(`/store-info/${storeId}`)
-            .then(response => response.json()) // サーバからのレスポンスをjsonに変換
+            .then(response => response.json())    // サーバからのレスポンスをjsonに変換
             .then(data => {
-                // 数値更新
                 employeesNum.innerText = `${data.employeesNum} 人`;
                 inventoriesNum.innerText = `${data.inventoriesNum} 冊`;
                 totalBooksWeight.innerText = `${data.totalBooksWeight} Kg`;

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-    let page = 1; // 初期ページ
-    let isLoading = false;
+    let page = 1;            // 初期ページ
+    let isLoading = false;   // 読み込み中かどうか
     let hasMorePages = true; // 次のページが存在するかのフラグ
     let selectedStoreId = document.getElementById('selectedStore').value;
 
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 次ページの在庫データを取得する
     function loadMoreInventories() {
         isLoading = true;
-        page++; // ページ番号をインクリメント
+        page++;
 
         fetch(`/inventory/load/${page}/${selectedStoreId}`)
             .then(response => response.json())

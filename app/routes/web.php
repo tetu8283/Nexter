@@ -20,7 +20,7 @@ Route::resource('arrivals', ArrivalController::class);
 
 // 非同期で店舗情報取得用
 Route::get('/store-info/{storeId}', [InventoryController::class, 'getStoreInfo']);
-// 無限スクロール用
+// 無限スクロール
 Route::get('/inventory/load/{pageNum}/{storeId}', [InventoryController::class, 'loadInventories']);
 
 Route::middleware('auth')->group(function () {

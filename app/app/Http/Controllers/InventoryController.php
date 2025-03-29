@@ -16,13 +16,13 @@ class InventoryController extends Controller
      */
     public function index() {
         if (auth()->user()->role == 1) {
-            $stores = Store::all(); // 従業員登録モーダル用
-            $userStoreId = auth()->user()->store_id; // ログイン中のユーザーの所属店舗id
+            $stores = Store::all();                                      // 従業員登録モーダル用
+            $userStoreId = auth()->user()->store_id;                     // ログイン中のユーザーの所属店舗id
             $employeesNum = Store::find($userStoreId)->users()->count(); // 所属店舗の従業員数
             $inventoriesNum = Inventory::where('store_id', $userStoreId)
                 ->join('books', 'inventories.book_id', '=', 'books.id')
                 ->where('books.status_flag', 2)
-                ->count(); // 所属店舗の在庫数
+                ->count();                                               // 所属店舗の在庫数
 
             // 在庫の総重量
             $totalBooksWeight = Inventory::where('store_id', $userStoreId)
@@ -40,14 +40,14 @@ class InventoryController extends Controller
                                                             // 店舗情報      全在庫         従業員数           在庫数             在庫総重量            所属店舗id
             return view('inventories.InventoryIndex', compact('stores', 'inventories', 'employeesNum', 'inventoriesNum', 'totalBooksWeight', 'userStoreId'));
         } else {
-            $books = Book::all(); // 在庫登録モーダル用
-            $userStoreId = auth()->user()->store_id; // ログイン中のユーザーの所属店舗id
-
+            $books = Book::all();                                        // 在庫登録モーダル用
+            $userStoreId = auth()->user()->store_id;                     // ログイン中のユーザーの所属店舗id
+            $userStore = Store::find($userStoreId);                      // 所属店舗
             $employeesNum = Store::find($userStoreId)->users()->count(); // 所属店舗の従業員数
             $inventoriesNum = Inventory::where('store_id', $userStoreId)
                 ->join('books', 'inventories.book_id', '=', 'books.id')
                 ->where('books.status_flag', 2)
-                ->count(); // 所属店舗の在庫数
+                ->count();                                                // 所属店舗の在庫数
 
             // 在庫の総重量
             $totalBooksWeight = Inventory::where('store_id', $userStoreId)
@@ -62,8 +62,8 @@ class InventoryController extends Controller
                 ->where('books.status_flag', 2)
                 ->orderBy('inventories.created_at', 'desc')
                 ->paginate(10); // 10件取得
-                                                                // 全在庫      全書籍       従業員数           在庫数             在庫総重量         所属店舗id
-            return view('inventories.InventoryIndex', compact('inventories', 'books', 'employeesNum', 'inventoriesNum', 'totalBooksWeight', 'userStoreId'));
+                                                                // 全在庫      全書籍       従業員数           在庫数             在庫総重量         所属店舗id      所属店舗
+            return view('inventories.InventoryIndex', compact('inventories', 'books', 'employeesNum', 'inventoriesNum', 'totalBooksWeight', 'userStoreId', 'userStore'));
         }
     }
 
@@ -116,14 +116,14 @@ class InventoryController extends Controller
     {
         $inventories = Inventory::select('inventories.*')
         ->join('books', 'inventories.book_id', '=', 'books.id')
-        ->where('inventories.store_id', $storeId) // 選択された店舗idの在庫取得
+        ->where('inventories.store_id', $storeId)           // 店舗idの在庫取得
         ->where('books.status_flag', 2)
         ->with('book')
         ->orderBy('inventories.created_at', 'desc')
         ->paginate(10, ['*'], 'page', $pageNum);
 
         return response()->json([
-            'inventories' => $inventories->items(), // ページ内の在庫
+            'inventories' => $inventories->items(),         // ページ内の在庫
             'hasMorePages' => $inventories->hasMorePages(), // 次ページが存在するか
         ]);
     }
@@ -136,16 +136,15 @@ class InventoryController extends Controller
      * @return void
      */
     public function store(Request $request) {
-        // 配列で取得
         $store_id = $request->store_id;
         $book_ids = $request->book_id;
-        // すでに登録されているbook_idを取得
+        // 登録済みのbook_idを取得
         $existingBookIds = Inventory::where('store_id', $store_id)->pluck('book_id')->toArray();
 
         $newStoreBookIds = array_diff($book_ids, $existingBookIds); // 新規登録されるbook_idのみを取得
 
         if(!empty($newStoreBookIds)) {
-            // バルクインサートで登録(複数登録対応)
+            // バルクインサート
             $data = array_map(function ($book_id) use ($store_id) {
                 return [
                     'store_id' => $store_id,
