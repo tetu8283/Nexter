@@ -22,6 +22,8 @@ Route::resource('arrivals', ArrivalController::class);
 Route::get('/store-info/{storeId}', [InventoryController::class, 'getStoreInfo']);
 // 無限スクロール
 Route::get('/inventory/load/{pageNum}/{storeId}', [InventoryController::class, 'loadInventories']);
+// 統合エンドポイント
+Route::get('/inventory/data/{storeId}', [InventoryController::class, 'getInventoryData'])->name('inventory.data');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

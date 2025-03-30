@@ -17,12 +17,12 @@ class ArrivalController extends Controller
      */
     public function index() {
         if (auth()->user()->role == 1) {
-            $stores = Store::all(); // 従業員登録モーダル用
+            $stores = Store::all();  // 従業員登録モーダル用
 
             return view('arrivals.ArrivalIndex', compact('stores'));
         } else {
-            $stores = Store::all(); // 従業員登録モーダル用
-            $books = Book::all(); // 在庫登録モーダル用
+            $stores = Store::all();  // 従業員登録モーダル用
+            $books = Book::all();    // 在庫登録モーダル用
 
             return view('arrivals.ArrivalIndex', compact('stores', 'books'));
         }

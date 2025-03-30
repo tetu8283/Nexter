@@ -2,51 +2,16 @@
 
 @section('content')
 <div class="container mt-5">
-    <div class="row mb-4">
-        {{-- 総従業員数表示 --}}
-        <div class="col-md-4">
-            <div class="book bg-light mb-3">
-                <div class="book-body d-flex align-items-center">
-                    <i class="fa-solid fa-people-group fa-3x text-primary me-3"></i>
-                    <div>
-                        <h5 class="book-title mb-1">従業員数</h5>
-                        <p id="employeesNum" class="book-text fs-3 text-end text-primary mb-0">{{ $employeesNum }} 人</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{-- 在庫総数表示 --}}
-        <div class="col-md-4">
-            <div class="book bg-light mb-3">
-                <div class="book-body d-flex align-items-center">
-                    <i class="fa-solid fa-book fa-3x text-success me-3"></i>
-                    <div>
-                        <h5 class="book-title mb-1">在庫数</h5>
-                        <p id="inventoriesNum" class="book-text fs-3 text-end text-success mb-0">{{ $inventoriesNum }} 冊</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{-- 総重量表示 --}}
-        <div class="col-md-4">
-            <div class="book bg-light mb-3">
-                <div class="book-body d-flex align-items-center">
-                    <i class="fa-solid fa-weight-hanging fa-3x text-warning me-3"></i>
-                    <div>
-                        <h5 class="book-title mb-1">総重量</h5>
-                        <p id="totalBooksWeight" class="book-text fs-3 text-end text-warning mb-0">{{ $totalBooksWeight }} Kg</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="book">
         <div class="book-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="mb-0">在庫一覧</h5>
-
-            @if(Auth::user()->role === 1)   {{-- 管理者の場合 --}}
-                <div class="d-flex align-items-center">
+            <!-- 検索フォーム（店舗選択・商品名・日付） -->
+            <form action="#" class="d-flex align-items-center gap-2 my-3" id="searchForm">
+                @csrf
+                <input type="text" name="name" id="searchName" class="form-control" placeholder="商品名">
+                <input type="date" name="start_date" id="startDate" class="form-control">
+                <input type="date" name="end_date" id="endDate" class="form-control">
+                @if(Auth::user()->role === 1)
                     <select name="store_id" id="selectedStore" class="form-select" required>
                         @foreach ($stores as $store)
                             <option value="{{ $store->id }}" {{ $store->id == $userStoreId ? 'selected' : '' }}>
@@ -54,27 +19,29 @@
                             </option>
                         @endforeach
                     </select>
-                </div>
-            @else                           {{-- 従業員だと、所属店舗のみ表示 --}}
-                <div class="d-flex align-items-center">
+                @else
                     <select name="store_id" id="selectedStore" class="form-select" required>
-                        <option value="{{ $userStore->id }}" {{ $userStore->id == $userStoreId }}>{{ $userStore->name }}</option>
+                        <option value="{{ $userStore->id }}" selected>
+                            {{ $userStore->name }}
+                        </option>
                     </select>
-                </div>
-            @endif
+                @endif
+                <button type="submit" class="btn btn-primary w-50">検索</button>
+            </form>
         </div>
 
-        <div class="book-body overflow-auto" style="max-height: 400px;">
+        <!-- 在庫一覧テーブル -->
+        <div class="book-body overflow-auto" style="max-height: 450px;">
             <table class="table table-striped table-hover table-bordered text-center mb-0">
                 <thead class="table-secondary">
                     <tr>
-                        <th scope="col" class="text-center">画像</th>
-                        <th scope="col">商品名</th>
-                        <th scope="col">重量</th>
-                        <th scope="col">登録日</th>
+                        <th>画像</th>
+                        <th>商品名</th>
+                        <th>重量</th>
+                        <th>登録日</th>
                     </tr>
                 </thead>
-                <tbody id="inventoryTableBody" data-page="1">
+                <tbody id="inventoryTableBody">
                     @foreach ($inventories as $item)
                         <tr style="height: 80px;">
                             <td class="text-center align-middle">
@@ -99,6 +66,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/display-store-info.js') }}"></script>
-    <script src="{{ asset('js/scroll.js') }}"></script>
+    <script src="{{ asset('js/inventory.js') }}"></script>
 @endsection
