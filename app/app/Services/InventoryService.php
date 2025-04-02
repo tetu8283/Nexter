@@ -10,37 +10,45 @@ class InventoryService
 {
     /**
      * 在庫一覧画面表示用データを取得
+     * 検索でも使用
      *
      * @param  $user
      * @return array
      */
     public function getInventoryIndexData($user)
     {
-        $userStoreId = $user->store_id;
-        $employeesNum = Store::find($userStoreId)->users()->count();
-        $inventoriesNum = Inventory::where('store_id', $userStoreId)
+        $storeId = $user->store_id;
+        $employeesNum = Store::find($storeId)->users()->count();
+        $inventoriesNum = Inventory::where('store_id', $storeId)
             ->join('books', 'inventories.book_id', '=', 'books.id')
             ->where('books.status_flag', 2)
             ->count();
-        $totalBooksWeight = Inventory::where('store_id', $userStoreId)
+        $totalBooksWeight = Inventory::where('store_id', $storeId)
             ->join('books', 'inventories.book_id', '=', 'books.id')
             ->where('books.status_flag', 2)
             ->sum('books.weight');
 
         $inventories = Inventory::select('inventories.*')
             ->join('books', 'inventories.book_id', '=', 'books.id')
-            ->where('inventories.store_id', $userStoreId)
+            ->where('inventories.store_id', $storeId)
             ->where('books.status_flag', 2)
             ->orderBy('inventories.created_at', 'desc')
             ->paginate(10);
 
+        // 入荷登録状態の書籍数を取得
+        $arrivalBooks = Book::where('status_flag', 0)
+            ->whereDoesntHave('inventories', function ($query) use ($storeId) {
+                $query->where('store_id', $storeId);
+            })
+            ->get();
+
         if ($user->role == 1) {
             $stores = Store::all(); // 従業員登録モーダル用
-            return compact('stores', 'inventories', 'employeesNum', 'inventoriesNum', 'totalBooksWeight', 'userStoreId');
+            return compact('stores', 'inventories', 'employeesNum', 'inventoriesNum', 'totalBooksWeight', 'storeId', 'arrivalBooks');
         } else {
             $books = Book::all();  // 在庫登録モーダル用
-            $userStore = Store::find($userStoreId);
-            return compact('inventories', 'books', 'employeesNum', 'inventoriesNum', 'totalBooksWeight', 'userStoreId', 'userStore');
+            $store = Store::find($storeId);
+
         }
     }
 
@@ -52,6 +60,7 @@ class InventoryService
      */
     public function getStoreInfoData($storeId)
     {
+        $storeId = $storeId;
         $employeesNum = Store::find($storeId)->users()->count();
         $inventoriesNum = Inventory::where('store_id', $storeId)
             ->join('books', 'inventories.book_id', '=', 'books.id')
@@ -68,7 +77,7 @@ class InventoryService
             ->with('book')
             ->get();
 
-        return compact('employeesNum', 'inventoriesNum', 'totalBooksWeight', 'inventories');
+        return compact('employeesNum', 'inventoriesNum', 'totalBooksWeight', 'inventories', 'storeId');
     }
 
     /**

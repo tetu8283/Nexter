@@ -20,10 +20,12 @@ Route::resource('arrivals', ArrivalController::class);
 
 // 非同期で店舗情報取得用
 Route::get('/store-info/{storeId}', [InventoryController::class, 'getStoreInfo']);
-// 無限スクロール
+
 Route::get('/inventory/load/{pageNum}/{storeId}', [InventoryController::class, 'loadInventories']);
-// 統合エンドポイント
+Route::get('/arrivals/load/{pageNum}/{storeId}', [ArrivalController::class, 'loadArrivals']);
+
 Route::get('/inventory/data/{storeId}', [InventoryController::class, 'getInventoryData'])->name('inventory.data');
+Route::get('/arrival/data/{storeId}', [ArrivalController::class, 'getArrivalData'])->name('arrival.data');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+@include('partials.StoreArrivalInfo')
 @section('content')
     <p>自店入荷予定登録</p>
     <div class="container">
@@ -8,7 +9,7 @@
             @method('POST')
 
             <div class="mb-2">
-                <input type="hidden" name="store_id" class="form-control" value="{{ $userStoreId }}" readonly required>
+                <input type="hidden" name="store_id" class="form-control" value="{{ $storeId }}" readonly required>
             </div>
 
             <div class="mb-2">

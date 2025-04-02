@@ -9,11 +9,18 @@ class Arrival extends Model
 {
     use HasFactory;
 
+    protected $table = 'arrival_books';
+
+    // arrival_date を日付としてキャスト
+    protected $casts = [
+        'arrival_date' => 'date',
+    ];
+
     protected $fillable = [
         'book_id',
         'store_id',
         'arrival_date',
-        'arrival_flag'
+        'arrival_flag' // 0: 登録, 1: 確定
     ];
 
     // arrivalとbookのリレーション

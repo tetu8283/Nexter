@@ -1,5 +1,11 @@
 @extends('layouts.app')
 
+@include('partials.StoreInventoryInfo', [
+    'employeesNum' => $employeesNum,
+    'inventoriesNum' => $inventoriesNum,
+    'totalBooksWeight' => $totalBooksWeight
+])
+
 @section('content')
 <div class="container mt-5">
     <div class="book">
@@ -14,7 +20,7 @@
                 @if(Auth::user()->role === 1)
                     <select name="store_id" id="selectedStore" class="form-select" required>
                         @foreach ($stores as $store)
-                            <option value="{{ $store->id }}" {{ $store->id == $userStoreId ? 'selected' : '' }}>
+                            <option value="{{ $store->id }}" {{ $store->id == $storeId ? 'selected' : '' }}>
                                 {{ $store->name }}
                             </option>
                         @endforeach

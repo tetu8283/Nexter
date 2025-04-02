@@ -16,12 +16,8 @@
     </header>
 
     <main>
-        @include('partials.StoreInfo', [
-            'employeesNum' => $employeesNum,
-            'inventoriesNum' => $inventoriesNum,
-            'totalBooksWeight' => $totalBooksWeight
-        ])
 
+        @include('partials.modals.ArrivalStoreModal', compact('storeId', 'stores', 'arrivalBooks'))
         @if (Auth::user()->role == 1)
             @include('partials.modals.UserStoreModal', compact('stores'))
             @include('partials.modals.BookStoreModal')

@@ -7,11 +7,17 @@ use Illuminate\Http\Request;
 use App\Models\Inventory;
 use App\Models\Store;
 use App\Services\InventoryService;
+use App\Services;
 
 class InventoryController extends Controller
 {
     protected $inventoryService;
 
+    /**
+     * コンストラクタ
+     *
+     * @param InventoryService $inventoryService
+     */
     public function __construct(InventoryService $inventoryService)
     {
         $this->inventoryService = $inventoryService;
@@ -30,6 +36,7 @@ class InventoryController extends Controller
 
     /**
      * 統合エンドポイント
+     * 検索でも使用
      *
      * @param Request $request
      * @param int $storeId
@@ -38,9 +45,11 @@ class InventoryController extends Controller
     public function getInventoryData(Request $request, $storeId)
     {
         $page = $request->input('page', 1);
+        // 検索フォームからの値を取得
         $searchName = $request->input('name');
         $startDate  = $request->input('start_date');
         $endDate    = $request->input('end_date');
+
         $employeesNum = Store::find($storeId)->users()->count();
         $inventoriesNum = Inventory::where('store_id', $storeId)
             ->join('books', 'inventories.book_id', '=', 'books.id')
