@@ -31,8 +31,19 @@ class ArrivalService
             ->orderBy('arrival_date', 'desc')
             ->paginate(10);
 
+        // $arrivalBooks = Book::where('status_flag', 0)
+        //     ->whereDoesntHave('inventories', function ($query) use ($storeId) {
+        //         $query->where('store_id', $storeId);
+        //     })
+        //     ->get();
+
         $arrivalBooks = Book::where('status_flag', 0)
+            // inventoriesに存在しないもの
             ->whereDoesntHave('inventories', function ($query) use ($storeId) {
+                $query->where('store_id', $storeId);
+            })
+            // かつ、arrivalsにも存在しないもの
+            ->whereDoesntHave('arrivals', function ($query) use ($storeId) {
                 $query->where('store_id', $storeId);
             })
             ->get();

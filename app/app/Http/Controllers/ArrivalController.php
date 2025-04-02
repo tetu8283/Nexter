@@ -36,25 +36,61 @@ class ArrivalController extends Controller
     }
 
     /**
-     * 入荷登録
+     * 入荷情報登録
      *
+     * @param Request $request
      * @return void
      */
-    public function create()
+    public function store(Request $request)
     {
-        $userStoreId = Auth::user()->store_id;
-        $arrivalBooks = Book::where('status_flag', 0)
-                ->whereDoesntHave('inventories', function ($query) use ($userStoreId) {
-                    $query->where('store_id', $userStoreId);
-                })
-                ->get();
+        // 共通の店舗id
+        $storeId = $request->input('store_id');
 
-        $data = $this->arrivalService->getArrivalIndexData(auth()->user());
+        // 入力値を取得（配列かどうかをチェックして配列に変換）
+        $bookIds = $request->input('book_id');
+        $arrivalDates = $request->input('arrival_date');
+        $arrivalFlags = $request->input('arrival_flag');
 
-        return view('arrivals.ArrivalStore', $data, compact('arrivalBooks'));
+        // 1件の場合、文字列になっているので配列に変換
+        if (!is_array($bookIds)) {
+            $bookIds = [$bookIds];
+        }
+        if (!is_array($arrivalDates)) {
+            $arrivalDates = [$arrivalDates];
+        }
+        if (!is_array($arrivalFlags)) {
+            $arrivalFlags = [$arrivalFlags];
+        }
+
+        $arrivals = [];
+
+        // 配列の件数分ループ
+        for ($i = 0; $i < count($bookIds); $i++) {
+            $arrivals[] = [
+                'store_id'     => $storeId,
+                'book_id'      => $bookIds[$i],
+                'arrival_date' => $arrivalDates[$i],
+                'arrival_flag' => $arrivalFlags[$i],
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ];
+        }
+
+        // バルクインサートで複数件を登録
+        Arrival::insert($arrivals);
+
+        return redirect('/arrivals')->with('flash_msg', '入荷情報を登録しました');
     }
 
 
+
+    /**
+     * 統合エンドポイント
+     *
+     * @param Request $request
+     * @param [type] $storeId
+     * @return void
+     */
     public function getArrivalData(Request $request, $storeId)
     {
         $page = $request->input('page', 1);

@@ -23,10 +23,8 @@ class Book extends Model
         return $this->hasMany(Inventory::class);
     }
 
-
-    // 1つの入荷予定は複数の本を持つ
     public function arrivals()
     {
-        return $this->belongsTo(Arrival::class);
+        return $this->hasMany(Arrival::class);
     }
 }
