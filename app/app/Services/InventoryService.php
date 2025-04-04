@@ -48,9 +48,12 @@ class InventoryService
         } else {
             $books = Book::all();  // 在庫登録モーダル用
             $store = Store::find($storeId);
-
+            // 非管理者の場合も、Blade 側で共通で使用している $stores を定義
+            $stores = [$store];
+            return compact('books', 'store', 'stores', 'inventories', 'employeesNum', 'inventoriesNum', 'totalBooksWeight', 'storeId', 'arrivalBooks');
         }
     }
+
 
     /**
      * 非同期で店舗情報取得用データを取得

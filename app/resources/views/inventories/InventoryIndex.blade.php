@@ -27,8 +27,8 @@
                     </select>
                 @else
                     <select name="store_id" id="selectedStore" class="form-select" required>
-                        <option value="{{ $userStore->id }}" selected>
-                            {{ $userStore->name }}
+                        <option value="{{ $store->id }}" selected>
+                            {{ $store->name }}
                         </option>
                     </select>
                 @endif

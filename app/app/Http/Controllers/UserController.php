@@ -6,11 +6,15 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\CreateUser; // バリデーションルール
 
 
 class UserController extends Controller
 {
-    public function store(Request $request) {
+    /**
+     * ユーザ登録
+     */
+    public function store(CreateUser $request) {
         $names = $request->input('name');
         $emails = $request->input('email');
         $passwords = $request->input('password');

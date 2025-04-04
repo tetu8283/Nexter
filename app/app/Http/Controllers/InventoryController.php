@@ -39,10 +39,10 @@ class InventoryController extends Controller
      * 検索でも使用
      *
      * @param Request $request
-     * @param int $storeId
+     * @param Store $store
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getInventoryData(Request $request, $storeId)
+    public function getInventoryData(Request $request, Store $store)
     {
         $page = $request->input('page', 1);
         // 検索フォームからの値を取得
@@ -50,18 +50,18 @@ class InventoryController extends Controller
         $startDate  = $request->input('start_date');
         $endDate    = $request->input('end_date');
 
-        $employeesNum = Store::find($storeId)->users()->count();
-        $inventoriesNum = Inventory::where('store_id', $storeId)
+        $employeesNum = $store->users()->count();
+        $inventoriesNum = Inventory::where('store_id', $store->id)
             ->join('books', 'inventories.book_id', '=', 'books.id')
             ->where('books.status_flag', 2)
             ->count();
-        $totalBooksWeight = Inventory::where('store_id', $storeId)
+        $totalBooksWeight = Inventory::where('store_id', $store->id)
             ->join('books', 'inventories.book_id', '=', 'books.id')
             ->where('books.status_flag', 2)
             ->sum('books.weight');
 
         $query = Inventory::with('book')
-            ->where('store_id', $storeId)
+            ->where('store_id', $store->id)
             ->whereHas('book', function ($q) {
                 $q->where('status_flag', 2);
             });
@@ -94,12 +94,13 @@ class InventoryController extends Controller
     /**
      * 非同期で店舗情報取得
      *
-     * @param int $storeId
+      * @param Store $store
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getStoreInfo($storeId)
+    public function getStoreInfo(Store $store)
     {
-        $data = $this->inventoryService->getStoreInfoData($storeId);
+        // $store->idでサービスに渡す
+        $data = $this->inventoryService->getStoreInfoData($store->id);
         return response()->json($data);
     }
 
@@ -107,12 +108,12 @@ class InventoryController extends Controller
      * 在庫一覧の無限スクロール用データ取得
      *
      * @param int $pageNum
-     * @param int $storeId
+     * @param Store $store
      * @return \Illuminate\Http\JsonResponse
      */
-    public function loadInventories($pageNum, $storeId)
+    public function loadInventories($pageNum, Store $store)
     {
-        $data = $this->inventoryService->loadInventoriesData($pageNum, $storeId);
+        $data = $this->inventoryService->loadInventoriesData($pageNum, $store->id);
         return response()->json($data);
     }
 

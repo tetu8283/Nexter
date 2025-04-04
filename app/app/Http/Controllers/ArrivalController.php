@@ -9,6 +9,7 @@ use App\Models\Store;
 use App\Models\Book;
 use App\Models\Inventory;
 use App\Services\ArrivalService;
+use App\Http\Requests\CreateProduct;
 
 class ArrivalController extends Controller
 {
@@ -38,12 +39,12 @@ class ArrivalController extends Controller
     /**
      * 入荷情報登録
      *
-     * @param Request $request
-     * @return void
+     * @param CreateProduct $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(CreateProduct $request)
     {
-        // 共通の店舗id
+        // 共通の店舗ID（ルートモデルバインディング対象外の場合はそのまま）
         $storeId = $request->input('store_id');
 
         // 入力値を取得（配列かどうかをチェックして配列に変換）
@@ -82,16 +83,14 @@ class ArrivalController extends Controller
         return redirect('/arrivals')->with('flash_msg', '入荷情報を登録しました');
     }
 
-
-
     /**
      * 統合エンドポイント
      *
      * @param Request $request
-     * @param [type] $storeId
-     * @return void
+     * @param Store   $store
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function getArrivalData(Request $request, $storeId)
+    public function getArrivalData(Request $request, Store $store)
     {
         $page = $request->input('page', 1);
         // 検索フォームからの値を取得
@@ -99,25 +98,22 @@ class ArrivalController extends Controller
         $startDate  = $request->input('start_date');
         $endDate    = $request->input('end_date');
 
-        $employeesNum = Store::find($storeId)->users()->count();
-        $inventoriesNum = Inventory::where('store_id', $storeId)
+        $employeesNum = $store->users()->count();
+        $inventoriesNum = Inventory::where('store_id', $store->id)
             ->join('books', 'inventories.book_id', '=', 'books.id')
             ->where('books.status_flag', 2)
             ->count();
 
-        $arrivalBooksNum = Arrival::where('store_id', $storeId)
+        $arrivalBooksNum = Arrival::where('store_id', $store->id)
             ->where('arrival_flag', 1) // 入荷が確定しているもの
             ->count();
 
+        // ※ここでは在庫情報のクエリとなっていますが、必要に応じArrival用のクエリに変更してください
         $query = Inventory::with('book')
-            ->where('store_id', $storeId)
+            ->where('store_id', $store->id)
             ->whereHas('book', function ($q) {
                 $q->where('status_flag', 2);
             });
-
-        $arrivals = Arrival::with('book')
-            ->where('store_id', $storeId)
-            ->where('arrival_flag', 0);
 
         if ($searchName) {
             $query->whereHas('book', function ($q) use ($searchName) {
@@ -136,15 +132,23 @@ class ArrivalController extends Controller
             ->paginate(10, ['*'], 'page', $page);
 
         return response()->json([
-            'arrivals'    => $arrivals->items(),
-            'hasMorePages'   => $arrivals->hasMorePages(),
-            'employeesNum'   => $employeesNum,
-            'inventoriesNum' => $inventoriesNum,
-            'arrivalBooksNum' => $arrivalBooksNum,
+            'arrivals'      => $arrivals->items(),
+            'hasMorePages'  => $arrivals->hasMorePages(),
+            'employeesNum'  => $employeesNum,
+            'inventoriesNum'=> $inventoriesNum,
+            'arrivalBooksNum'=> $arrivalBooksNum,
         ]);
     }
 
-    public function loadArrivals(Request $request, $pageNum, $storeId)
+    /**
+     * 入荷一覧の無限スクロール用データ取得
+     *
+     * @param Request $request
+     * @param int     $pageNum
+     * @param Store   $store
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function loadArrivals(Request $request, $pageNum, Store $store)
     {
         // 検索条件の取得
         $searchName = $request->input('name');
@@ -153,7 +157,7 @@ class ArrivalController extends Controller
 
         // 基本のクエリ作成（店舗・入荷未確定のみ）
         $query = Arrival::with('book')
-            ->where('store_id', $storeId)
+            ->where('store_id', $store->id)
             ->where('arrival_flag', 0);
 
         // 商品名検索（関連するBookモデルのnameカラム）
@@ -205,25 +209,22 @@ class ArrivalController extends Controller
                 'updated_at'  => now(),
             ]);
 
-            // $inventoryData = [];
-            // $arrivals = Arrival::whereIn('id', $ids)->get();
-
-            // foreach ($arrivals as $arrival) {
-            //     $inventoryData[] = [
-            //         'store_id'   => $arrival->store_id,
-            //         'book_id'    => $arrival->book_id,
-            //         'created_at' => now(),
-            //         'updated_at' => now(),
-            //     ];
-            // }
-
-            // if (!empty($inventoryData)) {
-            //     Inventory::insert($inventoryData);
-            // }
-
             return response()->json(['success' => true]);
         }
 
         return response()->json(['success' => false, 'message' => '確定する入荷予定を選択してください'], 400);
+    }
+
+    /**
+     * 入荷情報削除
+     *
+     * @param Arrival $arrival
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(Arrival $arrival)
+    {
+        $arrival->delete();
+
+        return redirect('/arrivals')->with('flash_msg', '入荷情報を削除しました');
     }
 }

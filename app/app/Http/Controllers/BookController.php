@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
+use App\Http\Requests\CreateProduct; // バリデーションルール
 
 class BookController extends Controller
 {
@@ -13,7 +14,7 @@ class BookController extends Controller
      * @param Request $request
      * @return void
      */
-    public function store(Request $request)
+    public function store(CreateProduct $request)
     {
         $names = $request->input('name');
         $weights = $request->input('weight');

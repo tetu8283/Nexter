@@ -49,8 +49,9 @@ class ArrivalService
         } else {
             $books = Book::all();  // 在庫登録モーダル用
             $userStore = Store::find($storeId);
+            $stores = [$userStore];
 
-            return compact('arrivals', 'books', 'employeesNum', 'inventoriesNum', 'arrivalBooksNum', 'storeId', 'userStore', 'arrivalBooks');
+            return compact('arrivals', 'books', 'employeesNum', 'inventoriesNum', 'arrivalBooksNum', 'storeId', 'userStore', 'arrivalBooks', 'stores');
         }
     }
 
