@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // 毎日午前6時に入荷予定を確定するコマンドを実行
+        $schedule->command('app:process-confirme-arrivals')->dailyAt('06:00');
     }
 
     /**

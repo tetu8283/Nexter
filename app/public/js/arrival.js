@@ -63,11 +63,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         ${formatDate(item.arrival_date)}
                     </td>
                     <td class="align-middle" style="width: 5rem;">
-                        <form action="/arrivals/${item.id}/edit" method="GET">
-                            <button type="submit" class="btn btn-warning btn-sm">編集</button>
-                        </form>
-                    </td>
-                    <td class="align-middle" style="width: 5rem;">
                         <form action="/arrivals/${item.id}" method="POST">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <input type="hidden" name="_method" value="DELETE">

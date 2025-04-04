@@ -30,7 +30,7 @@
                 <div class="book-body d-flex align-items-center">
                     <i class="fa-solid fa-people-carry-box fa-3x text-warning me-3"></i>
                     <div>
-                        <h5 class="book-title mb-1">入荷予定冊数</h5>
+                        <h5 class="book-title mb-1">入荷確定冊数</h5>
                         <p id="totalBooksWeight" class="book-text fs-3 text-end text-warning mb-0">{{ $arrivalBooksNum }} 冊</p>
                     </div>
                 </div>

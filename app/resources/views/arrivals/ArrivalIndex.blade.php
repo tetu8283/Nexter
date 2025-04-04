@@ -32,7 +32,6 @@
                         <th>商品名</th>
                         <th>入荷予定日</th>
                         <th></th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody id="inventoryTableBody">

@@ -20,9 +20,9 @@ class ArrivalService
             ->where('books.status_flag', 2)
             ->count();
 
-        // 入荷登録済みの書籍数を取得
+        // 入荷確定の書籍数を取得
         $arrivalBooksNum = Arrival::where('store_id', $storeId)
-            ->where('arrival_flag', 0) // 入荷登録状態のもの
+            ->where('arrival_flag', 1) // 入荷確定のもの
             ->count();
 
         $arrivals = Arrival::with('book')

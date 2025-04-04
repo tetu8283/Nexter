@@ -182,6 +182,9 @@ class ArrivalController extends Controller
         ]);
     }
 
+    /**
+     * 入荷予定の確定処理
+     */
     public function updateSingleArrivalFlag(Request $request)
     {
         $ids = $request->input('ids');
@@ -198,25 +201,25 @@ class ArrivalController extends Controller
 
             // Bookのstatus_flagを更新
             Book::whereIn('id', $bookIds)->update([
-                'status_flag' => 2,
+                'status_flag' => 1, // 入荷するのが確定した状態
                 'updated_at'  => now(),
             ]);
 
-            $inventoryData = [];
-            $arrivals = Arrival::whereIn('id', $ids)->get();
+            // $inventoryData = [];
+            // $arrivals = Arrival::whereIn('id', $ids)->get();
 
-            foreach ($arrivals as $arrival) {
-                $inventoryData[] = [
-                    'store_id'   => $arrival->store_id,
-                    'book_id'    => $arrival->book_id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }
+            // foreach ($arrivals as $arrival) {
+            //     $inventoryData[] = [
+            //         'store_id'   => $arrival->store_id,
+            //         'book_id'    => $arrival->book_id,
+            //         'created_at' => now(),
+            //         'updated_at' => now(),
+            //     ];
+            // }
 
-            if (!empty($inventoryData)) {
-                Inventory::insert($inventoryData);
-            }
+            // if (!empty($inventoryData)) {
+            //     Inventory::insert($inventoryData);
+            // }
 
             return response()->json(['success' => true]);
         }
