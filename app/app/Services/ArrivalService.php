@@ -20,9 +20,9 @@ class ArrivalService
             ->where('books.status_flag', 2)
             ->count();
 
-        // 入荷済みの書籍数を取得
+        // 入荷登録済みの書籍数を取得
         $arrivalBooksNum = Arrival::where('store_id', $storeId)
-            ->where('arrival_flag', 1) // 入荷が確定しているもの
+            ->where('arrival_flag', 0) // 入荷登録状態のもの
             ->count();
 
         $arrivals = Arrival::with('book')
@@ -30,12 +30,6 @@ class ArrivalService
             ->where('arrival_flag', 0)
             ->orderBy('arrival_date', 'desc')
             ->paginate(10);
-
-        // $arrivalBooks = Book::where('status_flag', 0)
-        //     ->whereDoesntHave('inventories', function ($query) use ($storeId) {
-        //         $query->where('store_id', $storeId);
-        //     })
-        //     ->get();
 
         $arrivalBooks = Book::where('status_flag', 0)
             // inventoriesに存在しないもの

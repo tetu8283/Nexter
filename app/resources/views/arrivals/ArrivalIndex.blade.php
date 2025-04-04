@@ -18,6 +18,8 @@
 
                 <button type="submit" class="btn btn-primary w-50">検索</button>
             </form>
+
+            <button class="btn btn-primary w-22" id="confirmArrivals">入荷登録確定</button>
         </div>
 
         <!-- 在庫一覧テーブル -->
@@ -34,32 +36,7 @@
                     </tr>
                 </thead>
                 <tbody id="inventoryTableBody">
-                    @foreach ($arrivals as $item)
-                        <tr style="height: 80px;">
-                            <td class="text-center align-middle">
-                                <img src="{{ asset($item->book->image) }}" alt="本の画像" class="img-fluid rounded" style="width: 80px; height: 80px;">
-                            </td>
-                            <td class="align-middle">
-                                <p class="mb-1">{{ $item->book ? $item->book->name : '本の情報なし' }}</p>
-                            </td>
-                            <td class="align-middle">
-                                {{ $item->arrival_date->format('Y-m-d') }}
-                            </td>
-                            <td class="align-middle" style="width: 5rem;">
-                                <form action="{{ route('arrivals.edit', $item->id) }}" method="GET">
-                                    @csrf
-                                    <button type="submit" class="btn btn-warning btn-sm">編集</button>
-                                </form>
-                            </td>
-                            <td class="align-middle" style="width: 5rem;">
-                                <form action="{{ route('arrivals.destroy', $item->id) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">削除</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
+
                 </tbody>
             </table>
         </div>

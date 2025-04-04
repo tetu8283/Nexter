@@ -27,6 +27,9 @@ Route::get('/arrivals/load/{pageNum}/{storeId}', [ArrivalController::class, 'loa
 Route::get('/inventory/data/{storeId}', [InventoryController::class, 'getInventoryData'])->name('inventory.data');
 Route::get('/arrival/data/{storeId}', [ArrivalController::class, 'getArrivalData'])->name('arrival.data');
 
+// 入荷完了用
+Route::post('/arrivals/update_flag', [ArrivalController::class, 'updateSingleArrivalFlag'])->name('arrivals.update_flag');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

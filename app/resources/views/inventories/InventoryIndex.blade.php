@@ -48,22 +48,7 @@
                     </tr>
                 </thead>
                 <tbody id="inventoryTableBody">
-                    @foreach ($inventories as $item)
-                        <tr style="height: 80px;">
-                            <td class="text-center align-middle">
-                                <img src="{{ asset($item->book->image) }}" alt="本の画像" class="img-fluid rounded" style="width: 80px; height: 80px;">
-                            </td>
-                            <td class="align-middle">
-                                <p class="mb-1">{{ $item->book ? $item->book->name : '本の情報なし' }}</p>
-                            </td>
-                            <td class="align-middle">
-                                {{ $item->book ? $item->book->weight : '-' }} Kg
-                            </td>
-                            <td class="align-middle">
-                                {{ $item->created_at->format('Y-m-d') }}
-                            </td>
-                        </tr>
-                    @endforeach
+
                 </tbody>
             </table>
         </div>

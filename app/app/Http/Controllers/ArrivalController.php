@@ -181,4 +181,46 @@ class ArrivalController extends Controller
             'hasMorePages' => $arrivals->hasMorePages(),
         ]);
     }
+
+    public function updateSingleArrivalFlag(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if ($ids && count($ids) > 0) {
+            Arrival::whereIn('id', $ids)->update([
+                'arrival_flag' => 1,
+                'updated_at'   => now(),
+            ]);
+
+            $bookIds = Arrival::whereIn('id', $ids)
+                ->pluck('book_id')
+                ->unique();
+
+            // Bookのstatus_flagを更新
+            Book::whereIn('id', $bookIds)->update([
+                'status_flag' => 2,
+                'updated_at'  => now(),
+            ]);
+
+            $inventoryData = [];
+            $arrivals = Arrival::whereIn('id', $ids)->get();
+
+            foreach ($arrivals as $arrival) {
+                $inventoryData[] = [
+                    'store_id'   => $arrival->store_id,
+                    'book_id'    => $arrival->book_id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            if (!empty($inventoryData)) {
+                Inventory::insert($inventoryData);
+            }
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => '確定する入荷予定を選択してください'], 400);
+    }
 }
